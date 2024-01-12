@@ -1,0 +1,52 @@
+# This workflow will build a golang project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-go
+
+name: Go
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go
+      uses: actions/setup-go@v4
+      with:
+        go-version: '1.20'
+
+    - name: install oapi-codegen
+      run: go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@latest
+
+    - name: crete folder
+      run: mkdir openapi
+      
+    - name: create types
+      run: oapi-codegen -generate "types" -package openapi output/openapi.json > openapi/type.gen.go
+
+    - name: create servers
+      run:  oapi-codegen -generate "server" -package openapi output/openapi.json > openapi/server.gen.go
+
+    - name: create client
+      run:  oapi-codegen -generate "client" -package openapi output/openapi.json > openapi/client.gen.go
+
+    - name: init
+      run: |
+        cd openapi
+        go mod init github.com/${GITHUB_REPOSITORY}/openapi
+
+    - name: Commit and Push Changes
+      run: |
+        git config user.name "rimapa"
+        git config user.email "jjunary0425@gmail.com"
+        
+        git add .
+        git commit -m "source generation"
+        git push
+      
