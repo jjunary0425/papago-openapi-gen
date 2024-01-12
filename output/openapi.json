@@ -1,0 +1,137 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Naver Papago API",
+    "version": "1.0.0",
+    "description": "API for language detection and translation using Naver Papago"
+  },
+  "paths": {
+    "/v1/papago/detectLangs": {
+      "post": {
+        "summary": "Detect Language",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/queryWord"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/detectedLangs"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/v1/papago/n2mt": {
+      "post": {
+        "summary": "Translate Text",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "source": {
+                    "type": "string"
+                  },
+                  "target": {
+                    "type": "string"
+                  },
+                  "text": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "source",
+                  "target",
+                  "text"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/message"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "queryWord": {
+        "type": "object",
+        "properties": {
+          "query": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "query"
+        ]
+      },
+      "detectedLangs": {
+        "type": "object",
+        "properties": {
+          "langCode": {
+            "type": "string"
+          }
+        }
+      },
+      "result": {
+        "type": "object",
+        "properties": {
+          "srcLangType": {
+            "type": "string"
+          },
+          "tarLangType": {
+            "type": "string"
+          },
+          "translatedText": {
+            "type": "string"
+          }
+        }
+      },
+      "message": {
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "object",
+            "properties": {
+              "@type": {
+                "type": "string"
+              },
+              "@service": {
+                "type": "string"
+              },
+              "@version": {
+                "type": "string"
+              },
+              "result": {
+                "$ref": "#/components/schemas/result"
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
